@@ -28,20 +28,18 @@ function rangoEnConflicto(rango: Date, bookings: Date[]) {
 export default function Book() {
   const [date, setDate] = React.useState<DateRange | undefined>();
 
-  const dates = { from: new Date("12-10-2024"), to: new Date("12-11-2024") };
-  const disabledRanges = [
+  const mockBooked = [
     { from: new Date("12-12-2024"), to: new Date("12-19-2024") },
     { from: new Date("12-08-2024"), to: new Date("12-09-2024") },
   ];
 
-  console.log(rangoEnConflicto(dates, disabledRanges));
-  const isRangeValid = !!date && !rangoEnConflicto(date, disabledRanges);
+  const isRangeValid = !!date && !rangoEnConflicto(date, mockBooked);
   return (
     <div className="flex gap-6 m-4 items-end">
-      <div className="flex flex-col gap-2 items-start">
-        <RangeCalendar date={date} setDate={setDate} />
+      <div className="">
+      <RangeCalendar date={date} setDate={setDate} />
 
-        {!!date && rangoEnConflicto(date, disabledRanges) && (
+        {!!date && rangoEnConflicto(date, mockBooked) && (
           <p className="color-red-700">
             La fecha seleccionada no esta disponible. <br />
             Por favor seleccione un rango que no incluya fechas bloqueadas
