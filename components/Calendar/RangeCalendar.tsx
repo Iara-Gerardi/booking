@@ -1,22 +1,19 @@
 import { Calendar } from "@/components/ui/calendar";
 import React from "react";
 
-export default function RangeCalendar({ date, setDate }: any) {
+export default function RangeCalendar({
+  date,
+  setDate,
+  defaultMonth,
+  disabledDates,
+}: any) {
   return (
     <Calendar
       mode="range"
       selected={date}
-      disabled={[
-        {
-          from: new Date("12-12-2024"),
-          to: new Date("12-19-2024"),
-        },
-        { before: new Date() },
-      ]}
-      onSelect={(selected, triggerDate, modifiers, e) => {
-        console.log(selected);
-        setDate(selected);
-      }}
+      disabled={[disabledDates && { ...disabledDates }, { before: new Date() }]}
+      onSelect={(selected) => setDate(selected)}
+      defaultMonth={defaultMonth}
       className="rounded-md border"
     />
   );

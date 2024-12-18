@@ -29,16 +29,34 @@ export default function Book() {
   const [date, setDate] = React.useState<DateRange | undefined>();
 
   const mockBooked = [
-    { from: new Date("12-12-2024"), to: new Date("12-19-2024") },
+    { from: new Date("12-27-2024"), to: new Date("12-29-2024") },
     { from: new Date("12-08-2024"), to: new Date("12-09-2024") },
   ];
 
   const isRangeValid = !!date && !rangoEnConflicto(date, mockBooked);
+
+  const now = new Date();
+  const nextMonth =
+    now.getMonth() == 11
+      ? `01-01-${now.getFullYear() + 1}`
+      : `01-${now.getMonth() + 2}-${now.getFullYear()}`;
+
   return (
     <div className="flex gap-6 m-4 items-end">
       <div className="">
-      <RangeCalendar date={date} setDate={setDate} />
-
+        <div className="flex gap-4">
+          <RangeCalendar
+            date={date}
+            setDate={setDate}
+            disabledDates={mockBooked}
+          />
+          <RangeCalendar
+            date={date}
+            setDate={setDate}
+            disabledDates={mockBooked}
+            defaultMonth={nextMonth}
+          />
+        </div>
         {!!date && rangoEnConflicto(date, mockBooked) && (
           <p className="color-red-700">
             La fecha seleccionada no esta disponible. <br />
