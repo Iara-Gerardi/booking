@@ -3,13 +3,16 @@ import RangeCalendar from "@/components/Calendar/RangeCalendar";
 import { Button } from "@/components/ui/button";
 import React from "react";
 import { DateRange } from "react-day-picker";
+import BookingDate from "../BookingDate";
+import { dictionary } from "@/Localization/Dictionary";
+import { usePathname } from "next/navigation";
 
-interface Date {
+interface Dates {
   from: string | globalThis.Date | any;
   to?: string | globalThis.Date | any;
 }
 
-function rangoEnConflicto(rango: Date, bookings: Date[]) {
+function validateRange(rango: Dates, bookings: Dates[]) {
   const rangeStart = new Date(rango.from);
   const rangeEnd = new Date(rango.to);
 
@@ -25,51 +28,58 @@ function rangoEnConflicto(rango: Date, bookings: Date[]) {
   return false;
 }
 
-export default function Book() {
+export default function Book({
+  bookedDates,
+}: {
+  bookedDates: { from: Date; to: Date }[];
+}) {
+  const locale = usePathname().split("/")[1];
   const [date, setDate] = React.useState<DateRange | undefined>();
+  const [loading, setLoading] = React.useState(false);
+  const isRangeValid = !!date && !validateRange(date, bookedDates);
 
-  const mockBooked = [
-    { from: new Date("12-27-2024"), to: new Date("12-29-2024") },
-    { from: new Date("12-08-2024"), to: new Date("12-09-2024") },
-  ];
-
-  const isRangeValid = !!date && !rangoEnConflicto(date, mockBooked);
+  const currentLocale = usePathname().split("/")[1];
 
   const now = new Date();
+
   const nextMonth =
     now.getMonth() == 11
       ? `01-01-${now.getFullYear() + 1}`
       : `01-${now.getMonth() + 2}-${now.getFullYear()}`;
 
+  const containerStyles = `[&_.container]:relative [&_.container]:overflow-hidden [&_.container]:after:w-full [&_.container]:after:h-full [&_.container]:after:absolute [&_.container]:after:animate-loading [&_.container]:after:z-10 [&_.container]:after:top-0 [&_.container]:after:left-0`;
+
   return (
-    <div className="flex gap-6 m-4 items-end">
+    <div className={`flex gap-6 m-4 items-end`}>
       <div className="">
-        <div className="flex gap-4">
+        <p className="container w-fit rounded-md my-2">
+          Holi estoy probando cosas
+        </p>
+        <div className={`flex gap-4  `}>
           <RangeCalendar
             date={date}
             setDate={setDate}
-            disabledDates={mockBooked}
+            disabledDates={bookedDates}
           />
           <RangeCalendar
             date={date}
             setDate={setDate}
-            disabledDates={mockBooked}
+            disabledDates={bookedDates}
             defaultMonth={nextMonth}
           />
         </div>
-        {!!date && rangoEnConflicto(date, mockBooked) && (
+        {!!date && !!date.from && !!date.to && (
+          <BookingDate fromDate={date.from} toDate={date.to} />
+        )}
+        {!!date && validateRange(date, bookedDates) && (
           <p className="color-red-700">
-            La fecha seleccionada no esta disponible. <br />
-            Por favor seleccione un rango que no incluya fechas bloqueadas
+            {dictionary[currentLocale].calendarError}
           </p>
         )}
       </div>
-      <div className="flex flex-col gap-4">
-        <Button disabled={!isRangeValid} className="bg-violet-600">
-          Reservar con Stripe
-        </Button>
-        <Button disabled={!isRangeValid} className="bg-blue-600">
-          Reservar con Mercado Pago
+      <div className="flex flex-col gap-4 ">
+        <Button disabled={!isRangeValid} className="bg-blue-500 container">
+          {dictionary[locale].book}
         </Button>
       </div>
     </div>
